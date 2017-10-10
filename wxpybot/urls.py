@@ -20,5 +20,5 @@ from bot.views import home
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', home),
+    url(r'^bot/', include('bot.urls')),
 ]
