@@ -10,4 +10,5 @@ class Friend(models.Model):
     nick_name=models.CharField(max_length=50)   #该聊天对象的昵称 (好友、群员的昵称，或群名称)
     avatar=models.CharField(max_length= 200 )   #头像
     date_time = models.DateTimeField(auto_now_add=True)  # 更新日期
+    type=models.BigIntegerField() # 类型 1 好友 2 群组 3 公众号
 

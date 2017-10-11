@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    bot
+{% endblock %}
+
+{% block content %}
+<div class="row" >
+    <ul class="list-group">
+    {% for friend in friends %}
+    <li class="list-group-item">
+    <img src="{{friend.HeadImgUrl}}" width="64px" height="64px"/>
+        <span>{{friend.name}}</span>
+    </li>
+    {% endfor %}
+
+</ul>
+{% endblock %}

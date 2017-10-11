@@ -7,11 +7,11 @@
 
 {% block content %}
 <div class="row" >
-    <ul class="list-group">
+    <ul class="list-group" id="friendlist">
     {% for friend in friends %}
     <li class="list-group-item">
     <img src="{{friend.avatar}}" width="64px" height="64px"/>
-        {{friend.name}}
+        <span>{{friend.name}}</span>
     </li>
     {% endfor %}
 
