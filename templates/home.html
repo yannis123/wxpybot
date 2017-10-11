@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 
 {% block title %}
     bot
@@ -8,7 +9,10 @@
 <div class="row" >
     <ul class="list-group">
     {% for friend in friends %}
-    <li class="list-group-item">{{friend.name}}</li>
+    <li class="list-group-item">
+    <img src="{{friend.avatar}}" width="64px" height="64px"/>
+        {{friend.name}}
+    </li>
     {% endfor %}
 
 </ul>

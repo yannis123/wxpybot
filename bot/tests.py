@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import os
+#os.system('cd C:\project\python\wxpybot python manage.py runserver')
 
-from django.test import TestCase
-
-# Create your tests here.
+tmp = os.popen('cd C:\project\python\wxpybot \n python manage.py runserver').readlines()
+print(tmp)
