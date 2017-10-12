@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.core import serializers
 from bot import models
@@ -11,24 +12,24 @@ import PIL.Image
 import os
 import io
 
+global bot,tuling
 
-def logincallback():
-    render(request,'login.html')
+def logincallback(request):
+    pass
 
 def qrcallback(uuid,status,qrcode):
-    image = PIL.Image.open(io.BytesIO(qrcode))
-    print(image)
-    image.save(os.path.join(os.getcwd()+'/static/images/','q.jpg'))
-
+    #image = PIL.Image.open(io.BytesIO(qrcode))
+    #print(image)
+    #image.save(os.path.join(os.getcwd()+'/static/images/','q.jpg'))
+    return HttpResponseRedirect('/bot/ref')
 
 avatarpath='/static/images/avatar/'
 list=list()
-bot=Bot(cache_path=False,console_qr =1,qr_path =os.path.join(os.getcwd()+'/static/images/','q.jpg'),login_callback =logincallback,qr_callback =qrcallback)
-tuling = Tuling(api_key='77dc8a7f0488467eac0a4345655dcadd')
+
 
 # Create your views here.
 def index(request):
-
+    bot=Bot(cache_path=True)
     bot.enable_puid('wxpy_puid.pkl')
 
     models.Friend.objects.all().delete()
@@ -50,10 +51,10 @@ def index(request):
     return render(request, 'index.html', {'friends':myfriends})
 
 def home(request):
-    bot = Bot(cache_path=True)
+    #bot = Bot(cache_path=True)
     result=models.Friend.objects.all()
 
-    return render(request, 'home.html', {'friends':result})
+    return render(request, 'home.html', {'friends':result,'qr':'/static/images/q.jpg'})
 
 def search(request,puid,type):
     friend=models.Friend.objects.filter(puid=puid).first()
@@ -76,18 +77,21 @@ def delete(request):
     return HttpResponse("ok")
 
 def login(request):
+    bot = Bot(cache_path=False,qr_path=os.path.join(os.getcwd() + '/static/images/', 'q.jpg'))
+    tuling = Tuling(api_key='77dc8a7f0488467eac0a4345655dcadd')
+    #qrcallback(request)
+    return render(request, 'login.html', {'friends':''})
 
+def ref(request):
     return render(request, 'login.html', {'friends':''})
 
 
-
-
-@bot.register(list)
+#@bot.register(list)
 def reply_my_friend(msg):
     print(msg)
     #tuling.do_reply(msg)
 
-@bot.register()
+#@bot.register()
 def print_others(msg):
     for friend in list:
         if friend.name==msg.sender.name:

@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+       <img src="{{ qr }} "/>
 <div class="row" >
     <ul class="list-group" id="friendlist">
     {% for friend in friends %}
@@ -16,4 +17,5 @@
     {% endfor %}
 
 </ul>
+
 {% endblock %}
