@@ -4,6 +4,10 @@
 $(function(){
     //alert(1)
     $("#friendlist li").click(function(){
-        alert($(this).find("span").text())
+        var puid=$(this).attr("puid");
+        var type=$(this).attr("type");
+        $.get("/bot/search/"+puid+","+type+"/",function(data){
+            alert(data)
+        })
     })
 })

@@ -2,18 +2,36 @@
 from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
+from django.core import serializers
 from bot import models
 from wxpy import *
+import PIL.Image
+
 import os
+import io
+
+
+def logincallback():
+    render(request,'login.html')
+
+def qrcallback(uuid,status,qrcode):
+    image = PIL.Image.open(io.BytesIO(qrcode))
+    print(image)
+    image.save(os.path.join(os.getcwd()+'/static/images/','q.jpg'))
+
 
 avatarpath='/static/images/avatar/'
-list=[]
-bot=Bot(cache_path=True)
+list=list()
+bot=Bot(cache_path=False,console_qr =1,qr_path =os.path.join(os.getcwd()+'/static/images/','q.jpg'),login_callback =logincallback,qr_callback =qrcallback)
 tuling = Tuling(api_key='77dc8a7f0488467eac0a4345655dcadd')
+
 # Create your views here.
 def index(request):
 
     bot.enable_puid('wxpy_puid.pkl')
+
+    models.Friend.objects.all().delete()
 
     myfriends=bot.friends()
 
@@ -34,25 +52,48 @@ def index(request):
 def home(request):
     bot = Bot(cache_path=True)
     result=models.Friend.objects.all()
-    friend = bot.groups().search('赌博')
-    print(friend)
-    list.append(friend)
+
     return render(request, 'home.html', {'friends':result})
 
 def search(request,puid,type):
-    friend=models.Friend.objects.filter(puid=puid)
+    friend=models.Friend.objects.filter(puid=puid).first()
+
     if friend:
         if type==1:
-            friend = ensure_one(bot.friends().search(friend[0].name))
+            friend = ensure_one(bot.friends().search(friend.name))
         if type==2:
-            friend=ensure_one(bot.groups().search(friend[0].name))
+            friend=ensure_one(bot.groups().search(friend.name))
 
         if list.count(friend)==0:
             list.append(friend)
+        else:
+            list.remove(friend)
 
-    return render(request, 'search.html', {'friends':list})
+    return HttpResponse(serializers.serialize("json", list))
+
+def delete(request):
+    models.Friend.objects.all().delete()
+    return HttpResponse("ok")
+
+def login(request):
+
+    return render(request, 'login.html', {'friends':''})
+
+
+
 
 @bot.register(list)
 def reply_my_friend(msg):
     print(msg)
-    tuling.do_reply(msg)
+    #tuling.do_reply(msg)
+
+@bot.register()
+def print_others(msg):
+    for friend in list:
+        if friend.name==msg.sender.name:
+            print(msg.type)
+            if msg.type=='Picture':
+                msg.reply_msg('发图的是猪。。。')
+            tuling.do_reply(msg)
+            break
+

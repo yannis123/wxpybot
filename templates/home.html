@@ -9,7 +9,7 @@
 <div class="row" >
     <ul class="list-group" id="friendlist">
     {% for friend in friends %}
-    <li class="list-group-item">
+    <li class="list-group-item" puid="{{friend.puid}}" type="{{friend.type}}">
     <img src="{{friend.avatar}}" width="64px" height="64px"/>
         <span>{{friend.name}}</span>
     </li>
